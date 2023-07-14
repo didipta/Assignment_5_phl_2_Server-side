@@ -9,13 +9,27 @@ import config from "../../config";
 import { jwtHelpers } from "../../shared/jwtHelpers";
 import { Secret } from "jsonwebtoken";
 
-const createUser = async (payload: IUser): Promise<IUser | null> => {
+const createUser = async (
+  payload: IUser
+): Promise<ILoginUserResponse | null> => {
   const isuserExist = await User.isUserExist(payload.email);
   if (isuserExist) {
     throw new ApiError(httpStatus.IM_USED, "User already exist");
   }
+  const accessToken = jwtHelpers.createToken(
+    {
+      email: payload.email,
+      role: payload.role,
+      phoneNumber: payload.phoneNumber,
+    },
+    config.jwt_secret as Secret,
+    config.jwt_expires_in as string
+  );
   const result = await User.create(payload);
-  return result;
+  return {
+    user:result,
+    accessToken,
+  };
 };
 
 const loginuser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
@@ -34,9 +48,9 @@ const loginuser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Password is incorrect");
   }
 
-  const { email:emails, role,phoneNumber } = isuserExist;
+  const { email: emails, role, phoneNumber } = isuserExist;
   const accessToken = jwtHelpers.createToken(
-    { emails, role,phoneNumber },
+    { emails, role, phoneNumber },
     config.jwt_secret as Secret,
     config.jwt_expires_in as string
   );

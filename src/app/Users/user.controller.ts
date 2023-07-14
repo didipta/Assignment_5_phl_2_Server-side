@@ -15,7 +15,7 @@ const createUser: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const user = req.body;
     const result = await UserService.createUser(user);
-    sendResponse<IUser>(res, {
+    sendResponse<ILoginUserResponse>(res, {
       statusCode: httpStatus.OK,
       success: true,
       message: "user created successfully!",
@@ -27,7 +27,6 @@ const loginuser = catchAsync(async (req: Request, res: Response) => {
   const { ...loginData } = req.body;
   const result = await UserService.loginuser(loginData);
   const { ...others } = result;
-  
 
   sendResponse<ILoginUserResponse>(res, {
     statusCode: 200,
