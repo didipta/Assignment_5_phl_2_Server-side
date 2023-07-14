@@ -1,15 +1,15 @@
-import { Request, RequestHandler, Response } from 'express';
+import { Request, RequestHandler, Response } from "express";
 
-import { UserService } from './user.service';
-import httpStatus from 'http-status';
+import { UserService } from "./user.service";
+import httpStatus from "http-status";
 
-import { IUser } from './User.interface';
+import { ILoginUserResponse, IUser } from "./User.interface";
 
-import sendResponse from '../../shared/sendResponse';
-import { paginationHelpers } from '../../shared/paginationHelper';
-import pick from '../../shared/pick';
-import catchAsync from '../../shared/catchAsync';
-import { paginationFields } from '../../shared/pagination';
+import sendResponse from "../../shared/sendResponse";
+import { paginationHelpers } from "../../shared/paginationHelper";
+import pick from "../../shared/pick";
+import catchAsync from "../../shared/catchAsync";
+import { paginationFields } from "../../shared/pagination";
 
 const createUser: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
@@ -18,12 +18,24 @@ const createUser: RequestHandler = catchAsync(
     sendResponse<IUser>(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'user created successfully!',
+      message: "user created successfully!",
       data: result,
     });
   }
 );
+const loginuser = catchAsync(async (req: Request, res: Response) => {
+  const { ...loginData } = req.body;
+  const result = await UserService.loginuser(loginData);
+  const { ...others } = result;
+  
 
+  sendResponse<ILoginUserResponse>(res, {
+    statusCode: 200,
+    success: true,
+    message: "User lohggedin successfully !",
+    data: others,
+  });
+});
 const getAlluser = catchAsync(async (req: Request, res: Response) => {
   const paginationOptions = pick(req.query, paginationFields);
 
@@ -32,7 +44,7 @@ const getAlluser = catchAsync(async (req: Request, res: Response) => {
   sendResponse<IUser[]>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'User fetched successfully',
+    message: "User fetched successfully",
     meta: result.meta,
     data: result.data,
   });
@@ -44,7 +56,7 @@ const updateuser = catchAsync(async (req: Request, res: Response) => {
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'User updated successfully',
+    message: "User updated successfully",
     data: result,
   });
 });
@@ -55,7 +67,7 @@ const deleteuser = catchAsync(async (req: Request, res: Response) => {
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'user deleted successfully',
+    message: "user deleted successfully",
     data: result,
   });
 });
@@ -66,7 +78,7 @@ const getSingleuser = catchAsync(async (req: Request, res: Response) => {
   sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Single user fetched successfully',
+    message: "Single user fetched successfully",
     data: result,
   });
 });
@@ -77,4 +89,5 @@ export const UserController = {
   getSingleuser,
   updateuser,
   deleteuser,
+  loginuser,
 };

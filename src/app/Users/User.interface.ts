@@ -1,7 +1,5 @@
 import { Model } from "mongoose";
 
-
-
 export type IRole = "user" | "admin";
 
 export type IUser = {
@@ -15,8 +13,8 @@ export type IUser = {
 export type UserModel = {
   isUserExist(
     // eslint-disable-next-line no-unused-vars
-    phoneNumber: string
-  ): Promise<Pick<IUser, "phoneNumber" | "password" | "role">>;
+    email: string
+  ): Promise<IUser>;
   isPasswordMatched(
     // eslint-disable-next-line no-unused-vars
     givenPassword: string,
@@ -24,3 +22,13 @@ export type UserModel = {
     savedPassword: string
   ): Promise<boolean>;
 } & Model<IUser>;
+
+export type ILoginUser = {
+  email: string;
+  password: string;
+};
+
+export type ILoginUserResponse = {
+  accessToken: string;
+  user: IUser;
+};
