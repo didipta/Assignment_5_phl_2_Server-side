@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post("/", auth(), BookController.createbook);
 router.get("/", BookController.getAllbook);
-router.get("/new", BookController.getNewBooks);
+router.get("/get/new", BookController.getNewBooks);
 
 export const BookRoutes = router;

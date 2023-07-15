@@ -10,5 +10,5 @@ const auth_1 = __importDefault(require("../Users/auth"));
 const router = express_1.default.Router();
 router.post("/", (0, auth_1.default)(), Book_controller_1.BookController.createbook);
 router.get("/", Book_controller_1.BookController.getAllbook);
-router.get("/new", Book_controller_1.BookController.getNewBooks);
+router.get("/get/new", Book_controller_1.BookController.getNewBooks);
 exports.BookRoutes = router;
