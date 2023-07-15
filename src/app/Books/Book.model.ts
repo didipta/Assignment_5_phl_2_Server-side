@@ -23,7 +23,7 @@ const BookSchema = new Schema<IBook>(
       {
         Reviewer: {
           type: Schema.Types.ObjectId,
-          ref: "User",
+          ref: "NewUser",
         },
         Review_Date: {
           type: Date,
@@ -37,7 +37,12 @@ const BookSchema = new Schema<IBook>(
     ],
     postby: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "NewUser",
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
     },
   },
   {

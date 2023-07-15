@@ -14,4 +14,5 @@ export type IBook = {
     }
   ];
   postby: Types.ObjectId | IUser;
+  image: string;
 };
