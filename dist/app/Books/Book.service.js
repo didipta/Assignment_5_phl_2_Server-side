@@ -44,9 +44,9 @@ const getSingleBook = (id) => __awaiter(void 0, void 0, void 0, function* () {
 const setReview = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
     return yield Book_model_1.Book.findByIdAndUpdate({ _id: id }, {
         $push: {
-            reviews: payload,
+            Reviews: payload,
         },
-    });
+    }, { new: true });
 });
 exports.BookService = {
     createBook,

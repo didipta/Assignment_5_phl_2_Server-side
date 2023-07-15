@@ -51,9 +51,10 @@ const setReview = async (
     { _id: id },
     {
       $push: {
-        reviews: payload,
+        Reviews: payload,
       },
-    }
+    },
+    { new: true }
   );
 };
 
