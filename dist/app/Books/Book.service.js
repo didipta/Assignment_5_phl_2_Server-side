@@ -34,8 +34,24 @@ const getNewBooks = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield Book_model_1.Book.find({}).sort({ createdAt: -1 }).limit(10);
     return result;
 });
+const getSingleBook = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield Book_model_1.Book.findById(id)
+        .populate("postby")
+        .populate("Reviews.Reviewer");
+    return result;
+});
+//set review
+const setReview = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield Book_model_1.Book.findByIdAndUpdate({ _id: id }, {
+        $push: {
+            reviews: payload,
+        },
+    });
+});
 exports.BookService = {
     createBook,
     getAllbook,
     getNewBooks,
+    getSingleBook,
+    setReview,
 };

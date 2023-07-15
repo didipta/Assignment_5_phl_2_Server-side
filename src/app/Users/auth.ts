@@ -22,8 +22,9 @@ const auth =
 
       // id diye user get
 
-      const { email } = verifiedUser;
-      const isUserExist = await User.isUserExist(email);
+      const { emails } = verifiedUser;
+      const isUserExist = await User.isUserExist(emails);
+      
       if (!isUserExist) {
         throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized');
       }

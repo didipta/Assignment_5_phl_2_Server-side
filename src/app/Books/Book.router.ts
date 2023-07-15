@@ -7,5 +7,7 @@ const router = express.Router();
 router.post("/", auth(), BookController.createbook);
 router.get("/", BookController.getAllbook);
 router.get("/get/new", BookController.getNewBooks);
+router.get("/:id", BookController.getSingleBook);
+router.patch("/review/:id",auth(), BookController.setReview);
 
 export const BookRoutes = router;

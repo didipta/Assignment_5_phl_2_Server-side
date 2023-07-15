@@ -28,8 +28,8 @@ const auth = () => (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         let verifiedUser = null;
         verifiedUser = jwtHelpers_1.jwtHelpers.verifyToken(token, config_1.default.jwt_secret);
         // id diye user get
-        const { email } = verifiedUser;
-        const isUserExist = yield User_model_1.User.isUserExist(email);
+        const { emails } = verifiedUser;
+        const isUserExist = yield User_model_1.User.isUserExist(emails);
         if (!isUserExist) {
             throw new ApiError_1.default(http_status_1.default.UNAUTHORIZED, 'You are not authorized');
         }

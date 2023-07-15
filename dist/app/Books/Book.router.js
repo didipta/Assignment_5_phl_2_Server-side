@@ -11,4 +11,6 @@ const router = express_1.default.Router();
 router.post("/", (0, auth_1.default)(), Book_controller_1.BookController.createbook);
 router.get("/", Book_controller_1.BookController.getAllbook);
 router.get("/get/new", Book_controller_1.BookController.getNewBooks);
+router.get("/:id", Book_controller_1.BookController.getSingleBook);
+router.patch("/review/:id", (0, auth_1.default)(), Book_controller_1.BookController.setReview);
 exports.BookRoutes = router;
