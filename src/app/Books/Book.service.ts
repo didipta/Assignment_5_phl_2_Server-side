@@ -1,7 +1,8 @@
+import { SortOrder } from "mongoose";
 import { IPaginationOptions } from "../../shared/Ipagination";
 import { IGenericResponse } from "../../shared/common";
 import { paginationHelpers } from "../../shared/paginationHelper";
-import { IBook, IBookReview } from "./Book.interface";
+import { IBook, IBookFilters, IBookReview, bookFields } from "./Book.interface";
 import { Book } from "./Book.model";
 
 const createBook = async (payload: IBook): Promise<IBook | null> => {
@@ -10,14 +11,57 @@ const createBook = async (payload: IBook): Promise<IBook | null> => {
 };
 
 const getAllbook = async (
+  filters: IBookFilters,
   paginationOptions: IPaginationOptions
 ): Promise<IGenericResponse<IBook[]>> => {
-  const { limit, page, skip } =
+  // Calculate pagination options
+  const { limit, page, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
+  const { searchTerm, ...filtersData } = filters;
 
-  const result = await Book.find({}).skip(skip).limit(limit);
+  const andConditions = [];
 
-  const total = await Book.countDocuments();
+  // Search needs $or for searching in specified fields
+  if (searchTerm) {
+    const regex = new RegExp(searchTerm, "i");
+    andConditions.push({
+      $or: [{ Title: regex }, { Author: regex }, { Genre: regex }],
+    });
+
+    // Handling Publication_Date separately as a date query
+    const parsedDate = Date.parse(searchTerm);
+    if (!isNaN(parsedDate)) {
+      andConditions.push({ Publication_Date: new Date(parsedDate) });
+    }
+  }
+
+  // Filters needs $and to fulfill all the conditions
+  if (Object.keys(filtersData).length) {
+    andConditions.push({
+      $and: Object.entries(filtersData).map(([field, value]) => ({
+        [field]: value,
+      })),
+    });
+  }
+
+  // Dynamic Sort needs field to do sorting
+  const sortConditions: { [key: string]: SortOrder } = {};
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
+
+  // Create the whereConditions object based on the andConditions array
+  const whereConditions =
+    andConditions.length > 0 ? { $and: andConditions } : {};
+
+  // Perform the search using the Book model with the whereConditions and pagination options
+  const result = await Book.find(whereConditions)
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
+
+  // Get the total count of documents matching the conditions
+  const total = await Book.countDocuments(whereConditions);
 
   return {
     meta: {

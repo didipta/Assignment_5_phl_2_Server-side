@@ -1,6 +1,6 @@
 import { Request, RequestHandler, Response } from "express";
 import catchAsync from "../../shared/catchAsync";
-import { IBook } from "./Book.interface";
+import { IBook, bookFilterableFields } from "./Book.interface";
 import sendResponse from "../../shared/sendResponse";
 import httpStatus from "http-status";
 import { BookService } from "./Book.service";
@@ -22,8 +22,8 @@ const createbook: RequestHandler = catchAsync(
 
 const getAllbook = catchAsync(async (req: Request, res: Response) => {
   const paginationOptions = pick(req.query, paginationFields);
-
-  const result = await BookService.getAllbook(paginationOptions);
+const filters = pick(req.query, bookFilterableFields);
+  const result = await BookService.getAllbook(filters,paginationOptions);
 
   sendResponse<IBook[]>(res, {
     statusCode: httpStatus.OK,

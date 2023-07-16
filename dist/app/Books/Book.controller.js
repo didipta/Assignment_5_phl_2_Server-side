@@ -25,6 +25,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookController = void 0;
 const catchAsync_1 = __importDefault(require("../../shared/catchAsync"));
+const Book_interface_1 = require("./Book.interface");
 const sendResponse_1 = __importDefault(require("../../shared/sendResponse"));
 const http_status_1 = __importDefault(require("http-status"));
 const Book_service_1 = require("./Book.service");
@@ -42,7 +43,8 @@ const createbook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
 }));
 const getAllbook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const paginationOptions = (0, pick_1.default)(req.query, pagination_1.paginationFields);
-    const result = yield Book_service_1.BookService.getAllbook(paginationOptions);
+    const filters = (0, pick_1.default)(req.query, Book_interface_1.bookFilterableFields);
+    const result = yield Book_service_1.BookService.getAllbook(filters, paginationOptions);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,

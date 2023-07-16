@@ -16,3 +16,17 @@ export type IBook = {
   postby: Types.ObjectId | IUser;
   image: string;
 };
+
+export type IBookFilters = {
+  searchTerm?: string;
+  academicFaculty?: Types.ObjectId;
+};
+
+export const bookFields = ["Title", "Author", "Genre", "Publication_Date"];
+export const bookFilterableFields = [
+  "searchTerm",
+  "Genre",
+  "Publication_Date",
+  "Author",
+  "Title",
+];

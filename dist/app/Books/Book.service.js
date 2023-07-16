@@ -8,6 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookService = void 0;
 const paginationHelper_1 = require("../../shared/paginationHelper");
@@ -16,10 +27,45 @@ const createBook = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield Book_model_1.Book.create(payload);
     return result;
 });
-const getAllbook = (paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
-    const { limit, page, skip } = paginationHelper_1.paginationHelpers.calculatePagination(paginationOptions);
-    const result = yield Book_model_1.Book.find({}).skip(skip).limit(limit);
-    const total = yield Book_model_1.Book.countDocuments();
+const getAllbook = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
+    // Calculate pagination options
+    const { limit, page, skip, sortBy, sortOrder } = paginationHelper_1.paginationHelpers.calculatePagination(paginationOptions);
+    const { searchTerm } = filters, filtersData = __rest(filters, ["searchTerm"]);
+    const andConditions = [];
+    // Search needs $or for searching in specified fields
+    if (searchTerm) {
+        const regex = new RegExp(searchTerm, "i");
+        andConditions.push({
+            $or: [{ Title: regex }, { Author: regex }, { Genre: regex }],
+        });
+        // Handling Publication_Date separately as a date query
+        const parsedDate = Date.parse(searchTerm);
+        if (!isNaN(parsedDate)) {
+            andConditions.push({ Publication_Date: new Date(parsedDate) });
+        }
+    }
+    // Filters needs $and to fulfill all the conditions
+    if (Object.keys(filtersData).length) {
+        andConditions.push({
+            $and: Object.entries(filtersData).map(([field, value]) => ({
+                [field]: value,
+            })),
+        });
+    }
+    // Dynamic Sort needs field to do sorting
+    const sortConditions = {};
+    if (sortBy && sortOrder) {
+        sortConditions[sortBy] = sortOrder;
+    }
+    // Create the whereConditions object based on the andConditions array
+    const whereConditions = andConditions.length > 0 ? { $and: andConditions } : {};
+    // Perform the search using the Book model with the whereConditions and pagination options
+    const result = yield Book_model_1.Book.find(whereConditions)
+        .sort(sortConditions)
+        .skip(skip)
+        .limit(limit);
+    // Get the total count of documents matching the conditions
+    const total = yield Book_model_1.Book.countDocuments(whereConditions);
     return {
         meta: {
             page,
