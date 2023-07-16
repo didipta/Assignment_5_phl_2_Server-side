@@ -79,6 +79,16 @@ const getNewBooks = async (): Promise<IBook[] | null> => {
   return result;
 };
 
+const updatebook = async (
+  id: string,
+  payload: IBook
+): Promise<IBook | null> => {
+  const result = await Book.findOneAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
+
+  return result;
+};
 const getSingleBook = async (id: string): Promise<IBook | null> => {
   const result = await Book.findById(id)
     .populate("postby")
@@ -102,10 +112,17 @@ const setReview = async (
   );
 };
 
+const deleteBook = async (id: string): Promise<IBook | null> => {
+  const result = await Book.findByIdAndDelete(id);
+  return result;
+};
+
 export const BookService = {
   createBook,
   getAllbook,
   getNewBooks,
   getSingleBook,
   setReview,
+  updatebook,
+  deleteBook,
 };

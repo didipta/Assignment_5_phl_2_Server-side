@@ -80,6 +80,12 @@ const getNewBooks = () => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield Book_model_1.Book.find({}).sort({ createdAt: -1 }).limit(10);
     return result;
 });
+const updatebook = (id, payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield Book_model_1.Book.findOneAndUpdate({ _id: id }, payload, {
+        new: true,
+    });
+    return result;
+});
 const getSingleBook = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield Book_model_1.Book.findById(id)
         .populate("postby")
@@ -94,10 +100,16 @@ const setReview = (id, payload) => __awaiter(void 0, void 0, void 0, function* (
         },
     }, { new: true });
 });
+const deleteBook = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield Book_model_1.Book.findByIdAndDelete(id);
+    return result;
+});
 exports.BookService = {
     createBook,
     getAllbook,
     getNewBooks,
     getSingleBook,
     setReview,
+    updatebook,
+    deleteBook,
 };

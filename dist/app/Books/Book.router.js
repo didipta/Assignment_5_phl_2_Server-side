@@ -13,4 +13,6 @@ router.get("/", Book_controller_1.BookController.getAllbook);
 router.get("/get/new", Book_controller_1.BookController.getNewBooks);
 router.get("/:id", Book_controller_1.BookController.getSingleBook);
 router.patch("/review/:id", (0, auth_1.default)(), Book_controller_1.BookController.setReview);
+router.patch("/:id", (0, auth_1.default)(), Book_controller_1.BookController.updateBook);
+router.delete("/:id", (0, auth_1.default)(), Book_controller_1.BookController.deleteBook);
 exports.BookRoutes = router;
